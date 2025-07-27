@@ -1,0 +1,25 @@
+[project]
+name = "bt-btheray-pre"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "bittensor>=9.8.2",
+    "matplotlib>=3.9.4",
+    "numpy>=1",
+    "openai>=1.97.0",
+    "pandas>=2.3.1",
+    "pydantic>=2",
+    "pytest>=8",
+    "python-dotenv>=1.1.1",
+    "rich>=13",
+    "seaborn>=0.13.2",
+    "setuptools>=68",
+    "sqlalchemy>=2.0.41",
+    "starlette>=0.30.0",
+    "torch>=2",
+    "transformers>=4.53.2",
+    "ulid-py>=1.1.0",
+    "wandb>=0.21.0",
+]
