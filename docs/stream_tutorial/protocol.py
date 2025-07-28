@@ -1,8 +1,6 @@
-import pydantic
-import bittensor as bt
 
-from abc import ABC, abstractmethod
-from typing import List, Union, Callable, Awaitable
+import bittensor as bt
+import pydantic
 from starlette.responses import StreamingResponse
 
 
@@ -42,21 +40,21 @@ class StreamPrompting(bt.StreamingSynapse):
     subclasses to further customize behavior for specific prompting scenarios or requirements.
     """
 
-    roles: List[str] = pydantic.Field(
+    roles: list[str] = pydantic.Field(
         ...,
         title="Roles",
         description="A list of roles in the StreamPrompting scenario. Immuatable.",
         allow_mutation=False,
     )
 
-    messages: List[str] = pydantic.Field(
+    messages: list[str] = pydantic.Field(
         ...,
         title="Messages",
         description="A list of messages in the StreamPrompting scenario. Immutable.",
         allow_mutation=False,
     )
 
-    required_hash_fields: List[str] = pydantic.Field(
+    required_hash_fields: list[str] = pydantic.Field(
         ["messages"],
         title="Required Hash Fields",
         description="A list of required fields for the hash.",

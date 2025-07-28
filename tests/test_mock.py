@@ -1,6 +1,7 @@
-import pytest
 import asyncio
+
 import bittensor as bt
+import pytest
 from prompting.mock import MockDendrite, MockMetagraph, MockSubtensor
 from prompting.protocol import PromptingSynapse
 

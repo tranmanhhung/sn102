@@ -17,10 +17,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
+from typing import Any, Union
+
 import bittensor as bt
-from typing import List, Optional, Union, Any, Dict
-from BetterTherapy.protocol import Dummy
 from bittensor.subnets import SubnetsAPI
+
+from BetterTherapy.protocol import Dummy
 
 
 class DummyAPI(SubnetsAPI):
@@ -33,7 +35,7 @@ class DummyAPI(SubnetsAPI):
         synapse.dummy_input = dummy_input
         return synapse
 
-    def process_responses(self, responses: List[Union["bt.Synapse", Any]]) -> List[int]:
+    def process_responses(self, responses: list[Union["bt.Synapse", Any]]) -> list[int]:
         outputs = []
         for response in responses:
             if response.dendrite.status_code != 200:

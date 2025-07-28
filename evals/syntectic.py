@@ -1,7 +1,8 @@
-import random
 import os
+import random
 
 from openai import OpenAI
+
 
 def simple_base_model_response(prompt: str, model: str = "gpt-3.5-turbo") -> str:
     """

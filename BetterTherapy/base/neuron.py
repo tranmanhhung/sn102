@@ -16,17 +16,16 @@
 # DEALINGS IN THE SOFTWARE.
 
 import copy
-import typing
+from abc import ABC, abstractmethod
 
 import bittensor as bt
 
-from abc import ABC, abstractmethod
+from BetterTherapy import __spec_version__ as spec_version
+from BetterTherapy.mock import MockMetagraph, MockSubtensor
 
 # Sync calls set weights and also resyncs the metagraph.
-from BetterTherapy.utils.config import check_config, add_args, config
+from BetterTherapy.utils.config import add_args, check_config, config
 from BetterTherapy.utils.misc import ttl_get_block
-from BetterTherapy import __spec_version__ as spec_version
-from BetterTherapy.mock import MockSubtensor, MockMetagraph
 
 
 class BaseNeuron(ABC):

@@ -1,7 +1,7 @@
 import random
+
 import bittensor as bt
 import numpy as np
-from typing import List
 
 
 def check_uid_availability(
@@ -26,7 +26,7 @@ def check_uid_availability(
     return True
 
 
-def get_random_uids(self, k: int, exclude: List[int] = None) -> np.ndarray:
+def get_random_uids(self, k: int, exclude: list[int] = None) -> np.ndarray:
     """Returns k available random uids from the metagraph.
     Args:
         k (int): Number of uids to return.
