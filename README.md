@@ -26,6 +26,8 @@ pip install uv
 
 # Install all dependencies in a virtual environment
 uv sync
+
+uv pip install -e .
 ```
 
 ---
@@ -136,16 +138,16 @@ This document outlines the hardware requirements for running Meta's Llama 3.1 8B
 To start a miner (after setting up wallets and registering on your subnet):
 
 ```bash
-python neurons/miner.py \
+uv run python neurons/miner.py \
   --netuid <your_netuid> \
-  --subtensor.chain_endpoint <endpoint> \
+  --subtensor.network <network> \
   --wallet.name miner \
   --wallet.hotkey default \
   --logging.debug
 ```
 
-- Replace `<your_netuid>` with your subnet ID (e.g., `1` for local).
-- Replace `<endpoint>` with your chain endpoint (e.g., `ws://127.0.0.1:9946` for local, or use `--subtensor.network test` for testnet).
+- Replace `<your_netuid>` with your subnet ID (e.g., `354` (test) and `10).
+- Replace `<network>` with your chain endpoint (e.g., `test` for local, or use `finney` for mainnet).
 
 ---
 
@@ -170,7 +172,7 @@ To start a validator (after setting up wallets and registering on your subnet):
 The validator will automatically create and manage runs, groups, and dashboards in wandb. See `BetterTherapy/utils/wandb.py` for advanced usage.
 
 ```bash
-python neurons/validator.py \
+uv run neurons/validator.py \
   --netuid <your_netuid> \
   --subtensor.chain_endpoint <endpoint> \
   --wallet.name validator \
@@ -178,7 +180,8 @@ python neurons/validator.py \
   --logging.debug
 ```
 
-- Replace `<your_netuid>` and `<endpoint>` as above.
+- Replace `<your_netuid>` with your subnet ID (e.g., `354` (test) and `10).
+- Replace `<network>` with your chain endpoint (e.g., `test` for local, or use `finney` for mainnet).
 
 The validator will automatically log evaluation metrics and charts to wandb.
 
