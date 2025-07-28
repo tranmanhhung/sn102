@@ -4,7 +4,6 @@
 
 [BetterTherapy](https://bettertherapy.ai/) Subnet is a decentralized protocol for deploying personalized AI Doctor Twins. Each twin represents a real-world, licensed expert, fine-tuned with domain-specific knowledge to deliver high-quality, trustworthy health insights to users.
 
-
 <img width="3012" height="1004" alt="BT Cover (1)" src="https://github.com/user-attachments/assets/8f6d0824-67ae-43fc-9e4c-d7a92f9f152e" />
 
 ## Project Setup
@@ -127,9 +126,17 @@ This document outlines the hardware requirements for running Meta's Llama 3.1 8B
 | Q8           | 24GB | 64k tokens         |
 | FP16         | 24GB | 32k tokens         |
 
+## Note
+
+For Gated models in hugging face
+
+```bash
+huggingface-cli login
+```
+
 ## Use Cloud Model (Miner)
 
-1. **Cooling**: Miner can modify code to use api key models lik openai, claude, etc.
+1.  Miner can modify code to use api key models lik openai, claude, etc.
 
 ---
 
