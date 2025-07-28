@@ -32,7 +32,7 @@ class SubnetEvaluationLogger:
                 self.run = wandb.init(
                     project=f"bittensor-bettertherapy-subnet-{self.network}-{self.subnet_id}",
                     id=resume_run_id,
-                    resume="must",
+                    resume="allow",
                     tags=[
                         f"validator-{self.validator_uid}",
                         f"hotkey-{self.validator_hotkey[:8]}",
