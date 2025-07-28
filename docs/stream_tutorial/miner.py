@@ -1,19 +1,17 @@
-import copy
-import time
-import asyncio
 import argparse
+import asyncio
+import copy
 import threading
+import time
 import traceback
 from abc import ABC, abstractmethod
 from functools import partial
-from starlette.types import Send
 
 import bittensor as bt
-from transformers import GPT2Tokenizer
-from typing import List, Dict, Tuple, Union, Callable, Awaitable
-
+from config import check_config, get_config
 from protocol import StreamPrompting
-from config import get_config, check_config
+from starlette.types import Send
+from transformers import GPT2Tokenizer
 
 
 class StreamMiner(ABC):
@@ -26,7 +24,7 @@ class StreamMiner(ABC):
         check_config(StreamMiner, self.config)
         bt.logging.info(self.config)  # TODO: duplicate print?
 
-        self.prompt_cache: Dict[str, Tuple[str, int]] = {}
+        self.prompt_cache: dict[str, tuple[str, int]] = {}
 
         # Activating Bittensor's logging with the set configurations.
         bt.logging.set_config(config=self.config.logging)
@@ -63,7 +61,7 @@ class StreamMiner(ABC):
             wallet=self.wallet, port=self.config.axon.port
         )
         # Attach determiners which functions are called when servicing a request.
-        bt.logging.info(f"Attaching forward function to axon.")
+        bt.logging.info("Attaching forward function to axon.")
         print(f"Attaching forward function to axon. {self._prompt}")
         self.axon.attach(
             forward_fn=self._prompt,
@@ -75,7 +73,7 @@ class StreamMiner(ABC):
         self.is_running: bool = False
         self.thread: threading.Thread = None
         self.lock = asyncio.Lock()
-        self.request_timestamps: Dict = {}
+        self.request_timestamps: dict = {}
 
     @abstractmethod
     def config(self) -> "bt.Config":
@@ -171,7 +169,7 @@ class StreamMiner(ABC):
         bt.logging.info(f"Miner starting at block: {self.last_epoch_block}")
 
         # This loop maintains the miner's operations until intentionally stopped.
-        bt.logging.info(f"Starting main loop")
+        bt.logging.info("Starting main loop")
         step = 0
         try:
             while not self.should_exit:
@@ -220,7 +218,7 @@ class StreamMiner(ABC):
             exit()
 
         # In case of unforeseen errors, the miner will log the error and continue operations.
-        except Exception as e:
+        except Exception:
             bt.logging.error(traceback.format_exc())
 
     def run_in_background_thread(self):

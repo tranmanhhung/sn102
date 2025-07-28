@@ -22,11 +22,11 @@ import unittest
 import bittensor as bt
 import torch
 
-from neurons.validator import Validator
 from BetterTherapy.base.validator import BaseValidatorNeuron
 from BetterTherapy.protocol import Dummy
 from BetterTherapy.utils.uids import get_random_uids
 from BetterTherapy.validator.reward import get_rewards
+from neurons.validator import Validator
 
 
 class TemplateValidatorNeuronTestCase(unittest.TestCase):

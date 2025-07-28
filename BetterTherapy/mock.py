@@ -1,10 +1,8 @@
-import time
-
 import asyncio
 import random
-import bittensor as bt
+import time
 
-from typing import List
+import bittensor as bt
 
 
 class MockSubtensor(bt.MockSubtensor):
@@ -61,7 +59,7 @@ class MockDendrite(bt.dendrite):
 
     async def forward(
         self,
-        axons: List[bt.axon],
+        axons: list[bt.axon],
         synapse: bt.Synapse = bt.Synapse(),
         timeout: float = 12,
         deserialize: bool = True,
@@ -119,4 +117,4 @@ class MockDendrite(bt.dendrite):
         Returns:
             str: The string representation of the Dendrite object in the format "dendrite(<user_wallet_address>)".
         """
-        return "MockDendrite({})".format(self.keypair.ss58_address)
+        return f"MockDendrite({self.keypair.ss58_address})"

@@ -16,9 +16,10 @@
 # THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-import numpy as np
 import random
+
 import bittensor as bt
+import numpy as np
 
 
 async def ping_uids(dendrite, metagraph, uids, timeout=3):
@@ -46,12 +47,12 @@ async def ping_uids(dendrite, metagraph, uids, timeout=3):
         )
         successful_uids = [
             uid
-            for uid, response in zip(uids, responses)
+            for uid, response in zip(uids, responses, strict=False)
             if response.dendrite.status_code == 200
         ]
         failed_uids = [
             uid
-            for uid, response in zip(uids, responses)
+            for uid, response in zip(uids, responses, strict=False)
             if response.dendrite.status_code != 200
         ]
     except Exception as e:

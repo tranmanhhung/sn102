@@ -15,18 +15,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-import time
+import argparse
 import asyncio
 import threading
-import argparse
+import time
 import traceback
 
 import bittensor as bt
 
 from BetterTherapy.base.neuron import BaseNeuron
 from BetterTherapy.utils.config import add_miner_args
-
-from typing import Union
 
 
 class BaseMinerNeuron(BaseNeuron):
@@ -60,7 +58,7 @@ class BaseMinerNeuron(BaseNeuron):
         )
 
         # Attach determiners which functions are called when servicing a request.
-        bt.logging.info(f"Attaching forward function to miner axon.")
+        bt.logging.info("Attaching forward function to miner axon.")
         self.axon.attach(
             forward_fn=self.forward,
             blacklist_fn=self.blacklist,
@@ -71,7 +69,7 @@ class BaseMinerNeuron(BaseNeuron):
         # Instantiate runners
         self.should_exit: bool = False
         self.is_running: bool = False
-        self.thread: Union[threading.Thread, None] = None
+        self.thread: threading.Thread | None = None
         self.lock = asyncio.Lock()
 
     def run(self):
@@ -137,7 +135,7 @@ class BaseMinerNeuron(BaseNeuron):
             exit()
 
         # In case of unforeseen errors, the miner will log the error and continue operations.
-        except Exception as e:
+        except Exception:
             bt.logging.error(traceback.format_exc())
 
     def run_in_background_thread(self):

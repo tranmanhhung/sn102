@@ -14,13 +14,14 @@
 # THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-import numpy as np
-from typing import List
 
 import bittensor as bt
+import numpy as np
+
 from neurons import validator
 
-def reward(self: validator.Validator, prompt: str, base_response: str, responses: List[str]) -> np.ndarray:
+
+def reward(self: validator.Validator, prompt: str, base_response: str, responses: list[str]) -> np.ndarray:
     """
     Reward the miner responses to the prompt. This method returns a reward
     value for each miner, which is used to update the miner's score.
@@ -39,7 +40,7 @@ def get_rewards(
     self: validator.Validator,
     prompt: str,
     base_response: str,
-    responses: List[str],
+    responses: list[str],
 ) -> np.ndarray:
     """
     Returns an array of rewards for the given query and responses.

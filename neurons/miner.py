@@ -16,16 +16,13 @@
 # DEALINGS IN THE SOFTWARE.
 
 import time
-import typing
+
 import bittensor as bt
-import os
-from openai import OpenAI
-from dotenv import load_dotenv
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Bittensor Miner Template:
 import BetterTherapy
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # import base miner class which takes care of most of the boilerplate
 from BetterTherapy.base.miner import BaseMinerNeuron
@@ -66,7 +63,7 @@ class Miner(BaseMinerNeuron):
 
         return synapse
 
-    def generate_response(self, prompt: str) -> typing.Optional[str]:
+    def generate_response(self, prompt: str) -> str | None:
         """
         Generate a response to the prompt.
         """
@@ -93,7 +90,7 @@ class Miner(BaseMinerNeuron):
 
     async def blacklist(
         self, synapse: BetterTherapy.protocol.InferenceSynapse
-    ) -> typing.Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Determines whether an incoming request should be blacklisted and thus ignored. Your implementation should
         define the logic for blacklisting requests based on your needs and desired security parameters.

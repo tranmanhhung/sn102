@@ -15,20 +15,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-from typing import Union
+
 from bittensor import (
+    AxonInfo,
     Balance,
     NeuronInfo,
-    AxonInfo,
     PrometheusInfo,
-    __ss58_format__,
 )
 from bittensor.mock.wallet_mock import MockWallet as _MockWallet
 from bittensor.mock.wallet_mock import get_mock_coldkey as _get_mock_coldkey
 from bittensor.mock.wallet_mock import get_mock_hotkey as _get_mock_hotkey
-from bittensor.mock.wallet_mock import get_mock_keypair as _get_mock_keypair
 from bittensor.mock.wallet_mock import get_mock_wallet as _get_mock_wallet
-
 from rich.console import Console
 from rich.text import Text
 
@@ -42,18 +39,18 @@ def __mock_wallet_factory__(*args, **kwargs) -> _MockWallet:
 
 
 class CLOSE_IN_VALUE:
-    value: Union[float, int, Balance]
-    tolerance: Union[float, int, Balance]
+    value: float | int | Balance
+    tolerance: float | int | Balance
 
     def __init__(
         self,
-        value: Union[float, int, Balance],
-        tolerance: Union[float, int, Balance] = 0.0,
+        value: float | int | Balance,
+        tolerance: float | int | Balance = 0.0,
     ) -> None:
         self.value = value
         self.tolerance = tolerance
 
-    def __eq__(self, __o: Union[float, int, Balance]) -> bool:
+    def __eq__(self, __o: float | int | Balance) -> bool:
         # True if __o \in [value - tolerance, value + tolerance]
         # or if value \in [__o - tolerance, __o + tolerance]
         return (

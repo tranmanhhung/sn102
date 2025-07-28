@@ -1,15 +1,15 @@
 import json
-from typing import List
 
 import bittensor as bt
 from openai import OpenAI
+
 
 class OpenAILLMAsJudgeEval:
     def __init__(self, api_key, judge_model="gpt-4"):
         self.judge_client = OpenAI(api_key=api_key)
         self.judge_model = judge_model
 
-    def judge_responses(self, prompt: str, base_response: str, responses: List[str]) -> List[float]:
+    def judge_responses(self, prompt: str, base_response: str, responses: list[str]) -> list[float]:
         """
         Use LLM-as-Judge to determine numerical scores for each miner's response compared to the base response.
         Returns a list of float scores (0-1).

@@ -16,16 +16,17 @@
 # DEALINGS IN THE SOFTWARE.
 
 import time
-import bittensor as bt
 
+import bittensor as bt
+import numpy as np
+import ulid
+
+from BetterTherapy.protocol import InferenceSynapse
 from BetterTherapy.utils.llm import generate_response
+from BetterTherapy.utils.uids import get_random_uids
+from BetterTherapy.validator.reward import get_rewards
 from evals.syntectic import generate_synthetic_samples
 from neurons import validator
-from BetterTherapy.protocol import InferenceSynapse
-from BetterTherapy.validator.reward import get_rewards
-from BetterTherapy.utils.uids import get_random_uids
-import ulid
-import numpy as np
 
 
 async def forward(self: validator.Validator):
@@ -65,7 +66,7 @@ async def forward(self: validator.Validator):
     rewards = get_rewards(self, prompt, base_response, responses=responses)
     responses_data = []
     full_rewards = []
-    for resp, uid, reward in zip(responses, miner_uids, rewards):
+    for resp, uid, reward in zip(responses, miner_uids, rewards, strict=False):
         if resp.output is None:
             full_rewards.append(0)
             continue

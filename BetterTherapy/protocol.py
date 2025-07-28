@@ -17,8 +17,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
+
 import bittensor as bt
-import typing
 
 # TODO(developer): Rewrite with your protocol definition.
 
@@ -54,7 +54,7 @@ class InferenceSynapse(bt.Synapse):
 
     prompt: str
     request_id: str
-    output: typing.Optional[str] = None
+    output: str | None = None
 
     def deserialize(self) -> "InferenceSynapse":
         """

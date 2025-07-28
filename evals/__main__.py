@@ -10,15 +10,16 @@ It uses the SimpleOpenAICompletionFn class to generate responses.
 It uses the generate_synthetic_samples function to generate synthetic data.
 """
 
-import json
-import time
 import argparse
+import json
 import os
-from dotenv import load_dotenv
+import time
 
 from completion import SimpleOpenAICompletionFn
+from dotenv import load_dotenv
 from eval import OpenAILLMAsJudgeEval
 from syntectic import generate_synthetic_samples, simple_base_model_response
+
 
 def run_eval(miner, eval, dataset_path, num_miners=1):
     """
@@ -28,7 +29,7 @@ def run_eval(miner, eval, dataset_path, num_miners=1):
     if dataset_path == "synthetic":
         samples = generate_synthetic_samples()
     else:
-        with open(dataset_path, 'r') as f:
+        with open(dataset_path) as f:
             samples = [json.loads(line) for line in f if line.strip()]
 
     total_scores = [0.0 for _ in range(num_miners)]

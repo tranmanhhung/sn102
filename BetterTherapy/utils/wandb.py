@@ -1,17 +1,19 @@
-import wandb
-from datetime import datetime
 import json
-from typing import Dict, List, Any, Optional
-import pandas as pd
-import bittensor as bt
 import os
+from datetime import datetime
+from typing import Any
+
+import bittensor as bt
 import matplotlib
 
+import wandb
+
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import seaborn as sns
 from collections import defaultdict
+
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 
 class SubnetEvaluationLogger:
@@ -110,7 +112,7 @@ class SubnetEvaluationLogger:
         wandb.define_metric("miner_metrics/*", step_metric="miner_step")
 
     def log_evaluation_round(
-        self, prompt: str, request_id: str, miner_responses: List[Dict[str, Any]]
+        self, prompt: str, request_id: str, miner_responses: list[dict[str, Any]]
     ):
         """Log evaluation round with improved UX"""
 
@@ -189,7 +191,7 @@ class SubnetEvaluationLogger:
                 bt.logging.error(f"Failed to create comparison charts: {e}")
 
     def _create_request_visualizations(
-        self, request_id: str, metrics: Dict, prompt: str
+        self, request_id: str, metrics: dict, prompt: str
     ):
         """Create visualizations for a specific request showing all miners"""
 
@@ -222,7 +224,7 @@ class SubnetEvaluationLogger:
         colors = [
             "green" if s > np.mean(sorted_scores) else "orange" for s in sorted_scores
         ]
-        for bar, color in zip(bars1, colors):
+        for bar, color in zip(bars1, colors, strict=False):
             bar.set_color(color)
 
         bars2 = ax2.bar(range(len(sorted_uids)), sorted_response_times)
@@ -236,7 +238,7 @@ class SubnetEvaluationLogger:
             "green" if rt < 5 else "orange" if rt < 15 else "red"
             for rt in sorted_response_times
         ]
-        for bar, color in zip(bars2, rt_colors):
+        for bar, color in zip(bars2, rt_colors, strict=False):
             bar.set_color(color)
 
         bars3 = ax3.bar(range(len(sorted_uids)), sorted_quality_scores)
@@ -292,7 +294,7 @@ Avg Quality: {np.mean(metrics["quality_scores"]):.2f}"""
         except:
             pass
 
-    def _update_live_metrics(self, request_id: str, metrics: Dict):
+    def _update_live_metrics(self, request_id: str, metrics: dict):
         """Update live metrics for real-time monitoring"""
 
         avg_score = np.mean(metrics["scores"]) if metrics["scores"] else 0
@@ -516,7 +518,7 @@ Avg Quality: {np.mean(metrics["quality_scores"]):.2f}"""
             pass
 
     def _log_request_comparison(
-        self, request_id: str, timestamp: datetime, prompt: str, metrics: Dict
+        self, request_id: str, timestamp: datetime, prompt: str, metrics: dict
     ):
         """Log request comparison data"""
 
@@ -729,7 +731,7 @@ Last Update: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"""
 
         if os.path.exists(run_file):
             try:
-                with open(run_file, "r") as f:
+                with open(run_file) as f:
                     run_info = json.load(f)
                 return run_info.get("run_id")
             except:

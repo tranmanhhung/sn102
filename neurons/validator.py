@@ -1,17 +1,16 @@
-from datetime import datetime
 import json
-import time
 import os
+import time
+from datetime import datetime
 
 # Bittensor
 import bittensor as bt
+import torch
 from dotenv import load_dotenv
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # import base validator class which takes care of most of the boilerplate
 from BetterTherapy.base.validator import BaseValidatorNeuron
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
-
 
 # Bittensor Validator Template:
 from BetterTherapy.utils.wandb import SubnetEvaluationLogger
@@ -63,7 +62,7 @@ class Validator(BaseValidatorNeuron):
         resume_run_id = None
         if os.path.exists(run_file):
             try:
-                with open(run_file, "r") as f:
+                with open(run_file) as f:
                     run_info = json.load(f)
                 resume_run_id = run_info.get("run_id")
                 bt.logging.info(f"Found existing run to resume: {resume_run_id}")
