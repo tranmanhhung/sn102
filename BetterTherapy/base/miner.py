@@ -20,6 +20,7 @@ import asyncio
 import threading
 import time
 import traceback
+from typing import Union
 
 import bittensor as bt
 
@@ -69,7 +70,7 @@ class BaseMinerNeuron(BaseNeuron):
         # Instantiate runners
         self.should_exit: bool = False
         self.is_running: bool = False
-        self.thread: threading.Thread | None = None
+        self.thread: Union[threading.Thread, None] = None  # noqa: UP007
         self.lock = asyncio.Lock()
 
     def run(self):

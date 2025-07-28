@@ -18,6 +18,8 @@
 # DEALINGS IN THE SOFTWARE.
 
 
+import typing as ty
+
 import bittensor as bt
 
 # TODO(developer): Rewrite with your protocol definition.
@@ -54,7 +56,7 @@ class InferenceSynapse(bt.Synapse):
 
     prompt: str
     request_id: str
-    output: str | None = None
+    output: ty.Optional[str] = None  # noqa: UP045
 
     def deserialize(self) -> "InferenceSynapse":
         """

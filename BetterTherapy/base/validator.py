@@ -23,6 +23,7 @@ import asyncio
 import copy
 import threading
 from traceback import print_exception
+from typing import Union
 
 import bittensor as bt
 import numpy as np
@@ -80,7 +81,7 @@ class BaseValidatorNeuron(BaseNeuron):
         # Instantiate runners
         self.should_exit: bool = False
         self.is_running: bool = False
-        self.thread: threading.Thread | None = None
+        self.thread: Union[threading.Thread, None] = None  # noqa: UP007
         self.lock = asyncio.Lock()
 
     def serve_axon(self):
