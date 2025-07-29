@@ -21,7 +21,9 @@ import numpy as np
 from neurons import validator
 
 
-def reward(self: validator.Validator, prompt: str, base_response: str, responses: list[str]) -> np.ndarray:
+def reward(
+    self: validator.Validator, prompt: str, base_response: str, responses: list[str]
+) -> np.ndarray:
     """
     Reward the miner responses to the prompt. This method returns a reward
     value for each miner, which is used to update the miner's score.
@@ -31,7 +33,7 @@ def reward(self: validator.Validator, prompt: str, base_response: str, responses
     """
     scores = self.evals.judge_responses(prompt, base_response, responses)
     bt.logging.info(
-        f"In rewards, prompt val: {prompt}, base_response val: {base_response}, responses val: {responses}, scores val: {scores}"
+        f"In rewards, prompt val: {prompt}, responses val len: {len(responses)}, scores val: {scores}"
     )
     return scores
 

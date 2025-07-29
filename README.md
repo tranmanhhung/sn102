@@ -6,6 +6,56 @@
 
 <img width="3012" height="1004" alt="BT Cover (1)" src="https://github.com/user-attachments/assets/8f6d0824-67ae-43fc-9e4c-d7a92f9f152e" />
 
+## Incentive Mechanism
+
+The BetterTherapy subnet implements a sophisticated incentive mechanism that rewards miners based on both response quality and response time. The scoring system ensures that miners are incentivized to provide high-quality, timely responses.
+
+### Scoring Components
+
+The total score for each miner response consists of two components:
+
+1. **Quality Score (70% weight)**: Based on the reward value from response evaluation
+2. **Response Time Score (30% weight)**: Based on how quickly the miner responds
+
+### Response Time Scoring
+
+Miners receive response time bonuses only if their quality reward exceeds 0.2 (indicating a minimum quality threshold):
+
+- **Under 10 seconds**: 100 points
+- **10-20 seconds**: 50 points
+- **20-30 seconds**: 20 points
+- **Over 30 seconds**: 0 points
+
+The response time score is then weighted at 30% of the final score.
+
+### Quality Scoring
+
+The quality score is calculated as:
+
+```
+quality_score = reward * 100 * 0.7
+```
+
+Where `reward` is the evaluation score (0-1) from the response quality assessment.
+
+### Final Score Calculation
+
+```
+total_score = (response_time_score * 0.3) + (quality_score * 0.7)
+```
+
+### Zero Score Conditions
+
+Miners receive a score of 0 if any of the following conditions are met:
+
+- Response output is None or empty
+- Quality reward is None or 0
+- No valid response is provided
+
+This mechanism encourages miners to optimize for both response quality and speed, creating a balanced incentive structure that benefits end users with fast, high-quality responses.
+
+---
+
 ## Project Setup
 
 ### 1. Prerequisites
@@ -187,7 +237,39 @@ uv run neurons/validator.py \
   --logging.debug
 ```
 
-- Replace `<your_netuid>` with your subnet ID (e.g., `354` (test) and `10).
+### Running with PM2 (Process Manager)
+
+For production deployments, you can use PM2 to manage the validator process:
+
+```bash
+pm2 start uv --name bt-test-vali \
+  -- run neurons/validator.py \
+  --netuid <your_netuid> \
+  --subtensor.chain_endpoint <endpoint> \
+  --wallet.name bt-test-vali --wallet.hotkey default \
+  --logging.debug --axon.port 8091
+```
+
+PM2 commands for process management:
+
+```bash
+# View running processes
+pm2 list
+
+# View logs
+pm2 logs bt-test-vali
+
+# Stop the validator
+pm2 stop bt-test-vali
+
+# Restart the validator
+pm2 restart bt-test-vali
+
+# Delete the process
+pm2 delete bt-test-vali
+```
+
+- Replace `<your_netuid>` with your subnet ID (e.g., `354` (`test`) and `102`(`finney`)).
 - Replace `<network>` with your chain endpoint (e.g., `test` for local, or use `finney` for mainnet).
 
 The validator will automatically log evaluation metrics and charts to wandb.

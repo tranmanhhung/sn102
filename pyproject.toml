@@ -52,4 +52,4 @@ extend-select = [
     "C4", # flake8-comprehensions
     "UP", # pyupgrade
 ]
-ignore = ["B008", "E501", "UP045", 'UP007']
+ignore = ["B008", "E501", "UP045", 'UP007', 'UP006']

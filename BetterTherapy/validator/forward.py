@@ -67,7 +67,7 @@ async def forward(self: validator.Validator):
     responses_data = []
     full_rewards = []
     for resp, uid, reward in zip(responses, miner_uids, rewards, strict=False):
-        if resp.output is None:
+        if resp.output is None or resp.output == "" or reward is None or reward == 0:
             full_rewards.append(0)
             continue
         response_time_score = 0
