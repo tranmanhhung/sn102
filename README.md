@@ -234,7 +234,7 @@ uv run neurons/validator.py \
   --subtensor.chain_endpoint <endpoint> \
   --wallet.name validator \
   --wallet.hotkey default \
-  --logging.debug
+  --logging.debug --model.name meta-llama/Llama-3.1-8B
 ```
 
 ### Running with PM2 (Process Manager)
@@ -247,7 +247,7 @@ pm2 start uv --name bt-test-vali \
   --netuid <your_netuid> \
   --subtensor.chain_endpoint <endpoint> \
   --wallet.name bt-test-vali --wallet.hotkey default \
-  --logging.debug --axon.port 8091
+  --logging.debug --axon.port 8091 --model.name meta-llama/Llama-3.1-8B
 ```
 
 PM2 commands for process management:
