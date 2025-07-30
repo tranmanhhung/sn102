@@ -26,7 +26,6 @@ from BetterTherapy.utils.llm import generate_response
 from BetterTherapy.utils.uids import get_random_uids
 from BetterTherapy.validator.reward import get_rewards
 from neurons import validator
-import json
 
 
 async def forward(self: validator.Validator):
@@ -44,28 +43,34 @@ async def forward(self: validator.Validator):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
 
     # The dendrite client queries the network.
-    prompt_for_vali = """Generate a question related to mental health, and provide a thoughtful, accurate answer to it. Respond only with valid JSON in the following format:
-                {
-                    "question": "Your generated mental health question here.",
-                    "answer": "A clear, concise, and informative answer to the question."
-                }"""
+    prompt_for_vali = (
+        prompt
+    ) = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>  
+You are a compassionate mental health assistant.  
+Generate both a mental health question and its empathetic answer.  
+Respond **only** with a VALID JSON object that:  
+  • Begins with `{` and ends with `}`  
+  • Contains exactly two keys: "question" and "answer"  
+  • Includes no additional text, comments, or formatting  
+Example:{"question":"<mental health question>","answer":"<empathetic answer>"}  
+<|eot_id|>  
+<|start_header_id|>assistant<|end_header_id|>{ 
+"""
 
     base_query_response = generate_response(prompt_for_vali, self.model, self.tokenizer)
-    try:
-        base_query_response = json.loads(base_query_response)
-    except json.JSONDecodeError:
-        bt.logging.error(f"Failed to decode JSON response: {base_query_response}")
+    prompt = base_query_response.get("question", None)
+    base_response = base_query_response.get("answer", None)
+    if not prompt or not base_response:
+        bt.logging.error(f"Invalid response format: {base_query_response}")
         return
-
-    parsed_response = json.loads(base_query_response)
-    prompt = parsed_response["question"]
-    base_response = parsed_response["answer"]
 
     request_id = "btai_" + ulid.new().str
     bt.logging.info(f"Request ID: {request_id}")
-    bt.logging.info(f"Prompt: {parsed_response['question']}")
+    bt.logging.info(f"Prompt: {prompt}")
     bt.logging.info(f"Miner UIDs: {miner_uids}")
-    bt.logging.info(f"Base Response: {parsed_response['answer'][:50]}...")
+    bt.logging.info(
+        f"Base Response: {base_response[:50] if len(base_response) > 50 else base_response}..."
+    )
 
     responses = await self.dendrite(
         axons=[self.metagraph.axons[uid] for uid in miner_uids],
