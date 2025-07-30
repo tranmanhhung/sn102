@@ -28,7 +28,7 @@ class Validator(BaseValidatorNeuron):
     """
 
     def __init__(self, config=None):
-        super(Validator, self).__init__(config=config)
+        super(Validator, self).__init__(config=config)  # noqa: UP008
 
         bt.logging.info("load_state()")
         self.load_state()
@@ -38,7 +38,7 @@ class Validator(BaseValidatorNeuron):
         bt.logging.info(f"Validator initialized with uid: {self.uid}")
 
     def setup_model(self, config):
-        self.model_name = config.model_name if config else "google/gemma-2b-it"
+        self.model_name = config.model.name if config else "google/gemma-2b-it"
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
@@ -51,7 +51,7 @@ class Validator(BaseValidatorNeuron):
         api_key = os.environ.get("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable not set.")
-        self.evals = OpenAILLMAsJudgeEval(api_key=api_key, judge_model='gpt-4')
+        self.evals = OpenAILLMAsJudgeEval(api_key=api_key, judge_model="gpt-4")
 
     def setup_wandb(self):
         config_dir = os.path.expanduser("~/.bittensor/wandb")

@@ -246,6 +246,13 @@ def add_validator_args(cls, parser):
         default="opentensor-dev",
     )
 
+    parser.add_argument(
+        "--model.name",
+        type=str,
+        help="The name of the project where you are sending the new run.",
+        default="meta-llama/Llama-3.1-8B",
+    )
+
 
 def config(cls):
     """
