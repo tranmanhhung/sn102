@@ -25,8 +25,8 @@ from BetterTherapy.protocol import InferenceSynapse
 from BetterTherapy.utils.llm import generate_response
 from BetterTherapy.utils.uids import get_random_uids
 from BetterTherapy.validator.reward import get_rewards
-from evals.syntectic import generate_synthetic_samples
 from neurons import validator
+import json
 
 
 async def forward(self: validator.Validator):
@@ -44,15 +44,28 @@ async def forward(self: validator.Validator):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
 
     # The dendrite client queries the network.
-    sample = generate_synthetic_samples()
-    prompt = sample[0]["input"]
-    base_response = generate_response(prompt, self.model, self.tokenizer)
+    prompt_for_vali = """Generate a question related to mental health, and provide a thoughtful, accurate answer to it. Respond only with valid JSON in the following format:
+                {
+                    "question": "Your generated mental health question here.",
+                    "answer": "A clear, concise, and informative answer to the question."
+                }"""
+
+    base_query_response = generate_response(prompt_for_vali, self.model, self.tokenizer)
+    try:
+        base_query_response = json.loads(base_query_response)
+    except json.JSONDecodeError:
+        bt.logging.error(f"Failed to decode JSON response: {base_query_response}")
+        return
+
+    parsed_response = json.loads(base_query_response)
+    prompt = parsed_response["question"]
+    base_response = parsed_response["answer"]
 
     request_id = "btai_" + ulid.new().str
     bt.logging.info(f"Request ID: {request_id}")
-    bt.logging.info(f"Prompt: {prompt}")
+    bt.logging.info(f"Prompt: {parsed_response['question']}")
     bt.logging.info(f"Miner UIDs: {miner_uids}")
-    bt.logging.info(f"Base Response: {base_response[:50]}...")
+    bt.logging.info(f"Base Response: {parsed_response['answer'][:50]}...")
 
     responses = await self.dendrite(
         axons=[self.metagraph.axons[uid] for uid in miner_uids],
