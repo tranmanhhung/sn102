@@ -33,12 +33,12 @@ class Validator(BaseValidatorNeuron):
         bt.logging.info("load_state()")
         self.load_state()
         self.setup_wandb()
-        self.setup_model(config)
+        self.setup_model()
         self.setup_evals()
         bt.logging.info(f"Validator initialized with uid: {self.uid}")
 
-    def setup_model(self, config):
-        self.model_name = config.model.name if config else "google/gemma-2b-it"
+    def setup_model(self):
+        self.model_name = self.config.model.name
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
