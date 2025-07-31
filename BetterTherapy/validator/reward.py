@@ -57,30 +57,43 @@ def get_rewards(
     """
     if not responses or len(responses) == 0:
         return np.array([])
-    
+
     # Add 10 to the response length to account for the formatting.
-    avg_response_length = sum((len(resp) + 10) for resp in responses) / len(responses) if responses else 0
+    avg_response_length = (
+        sum(
+            (len(resp.output) + 10)
+            for resp in responses
+            if not resp or resp.output is not None
+        )
+        / len(responses)
+        if responses
+        else 0
+    )
     if avg_response_length == 0:
         return np.array([])
 
-    prompt_length = len(prompt) 
-    base_response_length = len(base_response) 
-    max_batch_size = (self.evals_token_limit - prompt_length - base_response_length) // avg_response_length - 1 # -1 to account for the buffer
+    prompt_length = len(prompt)
+    base_response_length = len(base_response)
+    max_batch_size = int(
+        (self.evals_token_limit - prompt_length - base_response_length)
+        // avg_response_length
+        - 1
+    )  # -1 to account for the buffer
     if max_batch_size == 0:
         return np.array([])
-    
+
     if len(responses) <= max_batch_size:
         scores = reward(self, prompt, base_response, responses)
         return np.array(scores)
-    
+
     all_scores = []
     for i in range(0, len(responses), max_batch_size):
-        batch_responses = responses[i:i + max_batch_size]
+        batch_responses = [resp for resp in responses[i : i + max_batch_size]]
         batch_scores = reward(self, prompt, base_response, batch_responses)
         all_scores.extend(batch_scores)
         bt.logging.info(
-            f"Processed batch {i//max_batch_size + 1}/{(len(responses) + max_batch_size - 1)//max_batch_size} "
+            f"Processed batch {i // max_batch_size + 1}/{(len(responses) + max_batch_size - 1) // max_batch_size} "
             f"({len(batch_responses)} responses)"
         )
-    
+
     return np.array(all_scores)

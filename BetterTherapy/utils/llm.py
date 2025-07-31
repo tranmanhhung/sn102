@@ -39,7 +39,6 @@ def parse_response(text: str) -> dict:
 
     try:
         parsed = json.loads(json_str)
-        print(parsed)
         return parsed
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON format: {e}")
