@@ -59,7 +59,7 @@ class Miner(BaseMinerNeuron):
         Handles InferenceSynapse requests.
         """
         bt.logging.info(f"Forwarding request: {synapse}")
-        output = generate_response(synapse.prompt, self.model, self.tokenizer)
+        output = generate_response(synapse.prompt, self.model, self.tokenizer, "miner")
         synapse.output = output
 
         return synapse

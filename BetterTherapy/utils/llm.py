@@ -2,7 +2,7 @@ import torch
 import json
 
 
-def generate_response(prompt: str, model, tokenizer) -> str:
+def generate_response(prompt: str, model, tokenizer, type="validator") -> str:
     tokenizer.pad_token = tokenizer.eos_token
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -26,7 +26,9 @@ def generate_response(prompt: str, model, tokenizer) -> str:
     generated_text = tokenizer.decode(
         output_ids[0][input_length:], skip_special_tokens=True
     )
-    return parse_response(generated_text)
+    if type == "validator":
+        return parse_response(generated_text)
+    return generated_text
 
 
 def parse_response(text: str) -> dict:
