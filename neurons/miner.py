@@ -44,8 +44,8 @@ class Miner(BaseMinerNeuron):
         self.setup_model(config)
         bt.logging.info(f"Miner initialized with uid: {self.uid}")
 
-    def setup_model(self, config):
-        self.model_name = config.model_name if config else "google/gemma-2b-it"
+    def setup_model(self):
+        self.model_name = self.config.model.name
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
         self.model.eval()
