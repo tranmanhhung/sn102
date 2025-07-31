@@ -43,9 +43,7 @@ async def forward(self: validator.Validator):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
 
     # The dendrite client queries the network.
-    prompt_for_vali = (
-        prompt
-    ) = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>  
+    prompt_for_vali = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>  
 You are a compassionate mental health assistant.  
 Generate both a mental health question and its empathetic answer.  
 Respond **only** with a VALID JSON object that:  
