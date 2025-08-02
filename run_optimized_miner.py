@@ -17,6 +17,7 @@ sys.path.insert(0, str(project_root))
 from optimized_miner_config import OptimizedMinerConfig, get_hardware_config
 from neurons.optimized_miner import OptimizedMiner
 import bittensor as bt
+from BetterTherapy.utils.config import add_miner_args
 
 
 def setup_environment():
@@ -66,60 +67,65 @@ def apply_hardware_config(tier):
     print()
 
 
-def create_optimized_config():
-    """Create a config object with optimized settings"""
-    class Config:
-        def __init__(self):
-            self.model_preference = OptimizedMinerConfig.MODEL_PREFERENCE
-            self.blacklist = type('obj', (object,), {
-                'allow_non_registered': False,
-                'force_validator_permit': True
-            })()
+def create_bt_config():
+    """Create Bittensor config with optimized miner args"""
+    parser = argparse.ArgumentParser(description='Run OptimizedMiner')
     
-    return Config()
+    # Add standard Bittensor arguments
+    bt.wallet.add_args(parser)
+    bt.subtensor.add_args(parser)
+    bt.logging.add_args(parser)
+    bt.axon.add_args(parser)
+    
+    # Add miner specific arguments
+    add_miner_args(None, parser)
+    
+    # Add optimized miner specific arguments  
+    parser.add_argument('--hardware_tier', choices=['low_end', 'mid_range', 'high_end'], 
+                       default='mid_range', help='Hardware configuration tier')
+    parser.add_argument('--model_mode', choices=['speed', 'balanced', 'quality'],
+                       help='Override model preference')
+    parser.add_argument('--no_cache', action='store_true', help='Disable response caching')
+    parser.add_argument('--cache_size', type=int, help='Override cache size')
+    parser.add_argument('--max_workers', type=int, help='Override number of workers')
+    parser.add_argument('--show_info', action='store_true', help='Show configuration and exit')
+    
+    return bt.config(parser)
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Run OptimizedMiner with custom configuration')
-    parser.add_argument('--config', choices=['low_end', 'mid_range', 'high_end'], 
-                       default='mid_range', help='Hardware configuration tier')
-    parser.add_argument('--model', choices=['speed', 'balanced', 'quality'],
-                       help='Override model preference')
-    parser.add_argument('--no-cache', action='store_true', help='Disable response caching')
-    parser.add_argument('--cache-size', type=int, help='Override cache size')
-    parser.add_argument('--workers', type=int, help='Override number of workers')
-    parser.add_argument('--info', action='store_true', help='Show configuration and exit')
-    
-    args = parser.parse_args()
+    # Create Bittensor config
+    config = create_bt_config()
     
     print("🚀 OptimizedMiner Launcher")
     print("=" * 50)
     
     # Show info and exit if requested
-    if args.info:
+    if hasattr(config, 'show_info') and config.show_info:
         OptimizedMinerConfig.print_config()
         print_system_info()
-        return
+        return 0
     
     # Apply hardware configuration
-    apply_hardware_config(args.config)
+    hardware_tier = getattr(config, 'hardware_tier', 'mid_range')
+    apply_hardware_config(hardware_tier)
     
     # Apply command line overrides
-    if args.model:
-        OptimizedMinerConfig.MODEL_PREFERENCE = args.model
-        print(f"✅ Model preference overridden to: {args.model}")
+    if hasattr(config, 'model_mode') and config.model_mode:
+        OptimizedMinerConfig.MODEL_PREFERENCE = config.model_mode
+        print(f"✅ Model preference overridden to: {config.model_mode}")
     
-    if args.no_cache:
+    if hasattr(config, 'no_cache') and config.no_cache:
         OptimizedMinerConfig.ENABLE_CACHE = False
         print("✅ Caching disabled")
     
-    if args.cache_size:
-        OptimizedMinerConfig.CACHE_MAX_SIZE = args.cache_size
-        print(f"✅ Cache size set to: {args.cache_size}")
+    if hasattr(config, 'cache_size') and config.cache_size:
+        OptimizedMinerConfig.CACHE_MAX_SIZE = config.cache_size
+        print(f"✅ Cache size set to: {config.cache_size}")
     
-    if args.workers:
-        OptimizedMinerConfig.MAX_WORKERS = args.workers
-        print(f"✅ Workers set to: {args.workers}")
+    if hasattr(config, 'max_workers') and config.max_workers:
+        OptimizedMinerConfig.MAX_WORKERS = config.max_workers
+        print(f"✅ Workers set to: {config.max_workers}")
     
     print()
     
@@ -135,10 +141,7 @@ def main():
     print("-" * 50)
     
     try:
-        # Create optimized config
-        config = create_optimized_config()
-        
-        # Start the miner
+        # Start the miner with Bittensor config
         with OptimizedMiner(config=config) as miner:
             print(f"✅ Miner started successfully (UID: {miner.uid})")
             print(f"🎯 Target: <10s response time for 100 time points")
