@@ -36,15 +36,27 @@ def setup_environment():
 def print_system_info():
     """Print system information for debugging"""
     import torch
-    import psutil
+    import os
+    import platform
     
     print("🖥️  System Information:")
-    print(f"   CPU: {psutil.cpu_count()} cores")
-    print(f"   RAM: {psutil.virtual_memory().total // (1024**3)} GB")
+    print(f"   OS: {platform.system()} {platform.release()}")
+    print(f"   Python: {platform.python_version()}")
+    
+    try:
+        # Cố gắng lấy số CPU cores
+        cpu_count = os.cpu_count() or "Unknown"
+        print(f"   CPU: {cpu_count} cores")
+    except:
+        print("   CPU: Unknown")
     
     if torch.cuda.is_available():
-        print(f"   GPU: {torch.cuda.get_device_name()}")
-        print(f"   VRAM: {torch.cuda.get_device_properties(0).total_memory // (1024**3)} GB")
+        try:
+            print(f"   GPU: {torch.cuda.get_device_name()}")
+            vram_gb = torch.cuda.get_device_properties(0).total_memory // (1024**3)
+            print(f"   VRAM: {vram_gb} GB")
+        except:
+            print("   GPU: CUDA available but info unavailable")
     else:
         print("   GPU: Not available")
     print()
