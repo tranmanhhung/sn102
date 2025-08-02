@@ -10,7 +10,16 @@ from concurrent.futures import ThreadPoolExecutor
 
 import bittensor as bt
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Try to import BitsAndBytesConfig, fallback if not available
+try:
+    from transformers import BitsAndBytesConfig
+    QUANTIZATION_AVAILABLE = True
+except ImportError:
+    bt.logging.warning("BitsAndBytesConfig not available. 4-bit quantization will be disabled.")
+    QUANTIZATION_AVAILABLE = False
+    BitsAndBytesConfig = None
 
 # Bittensor Miner Template:
 import BetterTherapy
@@ -185,13 +194,18 @@ class OptimizedMiner(BaseMinerNeuron):
         
         bt.logging.info(f"Loading model: {self.model_name} (preference: {model_preference})")
         
-        # Quantization config for speed
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type="nf4"
-        )
+        # Quantization config for speed (if available)
+        quantization_config = None
+        if QUANTIZATION_AVAILABLE and OptimizedMinerConfig.USE_QUANTIZATION:
+            quantization_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4"
+            )
+            bt.logging.info("4-bit quantization enabled")
+        else:
+            bt.logging.info("4-bit quantization disabled (bitsandbytes not available or disabled in config)")
         
         try:
             # Load tokenizer
@@ -200,16 +214,26 @@ class OptimizedMiner(BaseMinerNeuron):
                 self.tokenizer.pad_token = self.tokenizer.eos_token
             
             # Load model with optimizations
+            model_kwargs = {
+                "device_map": "auto",
+                "torch_dtype": torch.float16,
+                "low_cpu_mem_usage": True
+            }
+            
+            # Only add quantization_config if it's available
+            if quantization_config is not None:
+                model_kwargs["quantization_config"] = quantization_config
+            
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
-                quantization_config=quantization_config,
-                device_map="auto",
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True
+                **model_kwargs
             )
             
             self.model.eval()
-            bt.logging.info("Model loaded successfully with 4-bit quantization")
+            if quantization_config is not None:
+                bt.logging.info("Model loaded successfully with 4-bit quantization")
+            else:
+                bt.logging.info("Model loaded successfully without quantization")
             
         except Exception as e:
             bt.logging.error(f"Error loading quantized model: {e}")
