@@ -27,6 +27,18 @@ import BetterTherapy
 # import base miner class which takes care of most of the boilerplate
 from BetterTherapy.base.miner import BaseMinerNeuron
 
+# Import optimized miner configuration
+try:
+    from optimized_miner_config import OptimizedMinerConfig
+except ImportError:
+    # Create a simple config class if not available
+    class OptimizedMinerConfig:
+        ENABLE_CACHE = True
+        CACHE_MAX_SIZE = 1000
+        USE_QUANTIZATION = True
+        MAX_WORKERS = 4
+        CACHE_TTL = 3600
+
 
 class TherapyResponseGenerator:
     """Advanced therapy response generator with templates and optimization"""
