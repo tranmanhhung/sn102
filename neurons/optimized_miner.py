@@ -225,23 +225,30 @@ class OptimizedMiner(BaseMinerNeuron):
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
             
-            # Load model with optimizations
-            model_kwargs = {
-                "device_map": "auto",
-                "torch_dtype": torch.float16,
-                "low_cpu_mem_usage": True
-            }
-            
-            # Only add quantization_config if it's available
+            # Load model with different strategies based on quantization availability
             if quantization_config is not None:
-                model_kwargs["quantization_config"] = quantization_config
-            
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
-                **model_kwargs
-            )
+                # Load with quantization (requires device_map)
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_name,
+                    quantization_config=quantization_config,
+                    device_map="auto",
+                    torch_dtype=torch.float16,
+                    low_cpu_mem_usage=True
+                )
+            else:
+                # Load without quantization (simpler approach)
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_name,
+                    torch_dtype=torch.float16
+                )
             
             self.model.eval()
+            
+            # Move to GPU if available (only for non-quantized models)
+            if quantization_config is None and torch.cuda.is_available():
+                self.model = self.model.to("cuda")
+                bt.logging.info("Model moved to GPU")
+            
             if quantization_config is not None:
                 bt.logging.info("Model loaded successfully with 4-bit quantization")
             else:
