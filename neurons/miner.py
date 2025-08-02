@@ -41,16 +41,27 @@ class Miner(BaseMinerNeuron):
 
     def __init__(self, config=None):
         super(Miner, self).__init__(config=config)  # noqa: UP008
-        self.setup_model(config)
+        self.setup_model()
         bt.logging.info(f"Miner initialized with uid: {self.uid}")
 
     def setup_model(self):
         self.model_name = self.config.model.name
+        bt.logging.info(f"Đang tải model: {self.model_name}")
+        
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        
+        # Thiết lập pad_token nếu chưa có
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+            
         self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
         self.model.eval()
+        
         if torch.cuda.is_available():
             self.model.to("cuda")
+            bt.logging.info("Model đã được chuyển sang GPU")
+        else:
+            bt.logging.info("Model đang chạy trên CPU")
 
     async def forward(
         self, synapse: BetterTherapy.protocol.InferenceSynapse

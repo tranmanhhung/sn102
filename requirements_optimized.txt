@@ -1,0 +1,18 @@
+# Additional requirements for OptimizedMiner
+# Install with: pip install -r requirements_optimized.txt
+
+# Core optimization libraries
+bitsandbytes>=0.41.0  # For 4-bit quantization
+accelerate>=0.20.0    # For model loading optimization
+peft>=0.4.0          # For LoRA fine-tuning (future enhancement)
+
+# Performance monitoring
+psutil>=5.9.0        # For system resource monitoring
+py-cpuinfo>=9.0.0    # For CPU information
+
+# Enhanced caching
+diskcache>=5.6.0     # For persistent caching (optional upgrade)
+
+# Additional model support
+sentencepiece>=0.1.99  # For some model tokenizers
+protobuf>=3.20.0      # For model compatibility

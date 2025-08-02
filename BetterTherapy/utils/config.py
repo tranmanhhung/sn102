@@ -169,6 +169,13 @@ def add_miner_args(cls, parser):
         help="Wandb entity to log to.",
     )
 
+    parser.add_argument(
+        "--model.name",
+        type=str,
+        help="The name of the model to use for inference.",
+        default="microsoft/DialoGPT-medium",
+    )
+
 
 def add_validator_args(cls, parser):
     """Add validator specific arguments to the parser."""
